@@ -7,6 +7,16 @@ This repository contains codes realizing nonlinear optimization methods and visu
 
 
 
+### Implemented methods
+
+1. Newton method
+2. Gradient descent
+3. BFGS with line search (Wolfe condition and strong Wolfe condition)
+
+
+
+### Visualization
+
 1. 3D visualization
 
 <p align="center">

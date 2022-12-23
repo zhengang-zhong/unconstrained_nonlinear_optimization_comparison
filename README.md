@@ -1,4 +1,4 @@
-# nonlinear_optimization_comparison
+# unconstrained_nonlinear_optimization_comparison
 Compare different unconstrained nonlinear optimization methods and visualize their performances.
 
 

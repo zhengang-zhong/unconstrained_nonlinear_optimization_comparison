@@ -3,7 +3,7 @@ Compare different unconstrained nonlinear optimization methods and visualize the
 
 
 
-This repository contains codes realizing nonlinear optimization methods and visualizing each iteration in different plots. More methods will be included.
+This repository contains codes realizing nonlinear optimization methods and visualizing each iteration in different plots. This repo will be polished, and more methods/objs will be included.
 
 
 

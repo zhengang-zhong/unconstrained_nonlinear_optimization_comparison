@@ -65,6 +65,19 @@ class Solver(Model):
                     self.c2 = solver_setting['BFGS_wolfe_condition']['c2']
                 self.BFGS_wolfe_condition()
 
+            elif type == 'Fletcher_Reeves':
+                if 'Fletcher_Reeves' not in solver_setting:
+                    self.solver_setting['Fletcher_Reeves'] = None
+                    self.alpha = 0.1
+                    self.c1 = 0.4
+                    self.c2 = 0.45 #  For FLETCHER–REEVES method, choose c2 < 0.5
+                else:
+                    self.alpha = solver_setting['Fletcher_Reeves']['alpha']
+                    self.c1 = solver_setting['Fletcher_Reeves']['c1']
+                    self.c2 = solver_setting['Fletcher_Reeves']['c2']
+                self.Fletcher_Reeves()
+
+
             else:
                 print('solver type error')
 
@@ -198,8 +211,8 @@ class Solver(Model):
         fig.show()
 
     def BFGS_wolfe_condition(self):
-        c1 = self.c1
-        c2 = self.c2
+        # c1 = self.c1
+        # c2 = self.c2
 
         obj_list = []
         x_list = []
@@ -229,7 +242,7 @@ class Solver(Model):
                 pi = - Hi @ grad_i
                 alpha = self.Wolfe_condition(xi, pi)
                 xi_prev = xi
-                print(alpha, pi)
+                # print(alpha, pi)
                 # self.plot_phi(xi, pi, alpha) # This line plot value function according to different alpha
                 xi = xi + alpha * pi
                 error = ca.norm_2(xi - xi_prev)
@@ -248,8 +261,55 @@ class Solver(Model):
         self.obj_dict[this_function_name] = obj_list
         self.iter_dict[this_function_name] = iter_counter
 
-        print(x_list)
+        # print(x_list)
 
+    def Fletcher_Reeves(self):
+        alpha = self.alpha
+        # print(alpha)
+        obj_list = []
+        x_list = []
+
+        obj_fn = self.obj_fn
+        grad_func = self.grad_func
+        # hessian_func = self.hessian_func
+
+        initial_guess = self.solver_setting['initial_guess']
+        max_iter = self.solver_setting['max_iter']
+        tol_obj_diff = self.solver_setting['tol_obj_diff']
+        error = 1e5
+        xi = initial_guess
+        iter_counter = 0
+        obj_list += obj_fn(xi).full().flatten().tolist()
+        x_list += xi.full().flatten().tolist()
+        # max_iter = 20
+        obj_i = obj_fn(xi)
+        grad_i = grad_func(xi)
+        pi = - grad_i
+        for i in range(max_iter):
+            if error >= tol_obj_diff:
+                iter_counter += 1
+                xi_prev = xi
+                alpha = self.Wolfe_condition(xi, pi)
+                x_next = xi + alpha * pi
+                grad_plus = grad_func(x_next)
+                beta_i_next = (grad_plus.T @ grad_plus ) / (grad_i.T @ grad_i)
+                pk_next = - grad_plus + beta_i_next * pi
+
+                grad_i = grad_plus
+                pi = pk_next
+                xi = x_next
+
+                error = ca.norm_2(xi - xi_prev)
+                obj_list += obj_fn(xi).full().flatten().tolist()
+                x_list += xi.full().flatten().tolist()
+            else:
+                break
+        this_function_name = inspect.currentframe().f_code.co_name
+
+        self.x_dict[this_function_name] = x_list
+        self.obj_dict[this_function_name] = obj_list
+        self.iter_dict[this_function_name] = iter_counter
+        # print(x_list)
 
 
 class Visualize(Solver):
@@ -301,6 +361,7 @@ class Visualize(Solver):
             self.update_plot_convergence(N_iter, obj_list, N_solver, type)
             N_solver += 1
         fig.show()
+
 
 
     def plot_init(self, x1_range=None, x2_range=None, z_range=None):

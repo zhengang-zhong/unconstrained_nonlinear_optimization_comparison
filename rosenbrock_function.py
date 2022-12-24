@@ -14,7 +14,10 @@ if __name__ == "__main__":
     obj = ca.Function('obj_func', [x_SX], [rosenbrock(x_SX)])
     solver_setting = {}
     # solver_setting['type'] = ['Newton', 'BFGS_wolfe_condition']
-    solver_setting['type'] = ['Newton', 'gradient_descent', 'BFGS_wolfe_condition']
+    # solver_setting['type'] = ['Fletcher_Reeves']
+    solver_setting['type'] = ['Newton', 'gradient_descent', 'BFGS_wolfe_condition', 'Fletcher_Reeves']
+    # solver_setting['Fletcher_Reeves'] = {}
+    # solver_setting['Fletcher_Reeves']['alpha'] = 0.4
     solver_setting['gradient_descent'] = {}
     solver_setting['gradient_descent']['alpha'] = 0.1 # Oscillate + diverge
     solver_setting['tol_obj_diff'] = 1e-14

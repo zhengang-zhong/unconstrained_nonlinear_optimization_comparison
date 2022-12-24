@@ -12,6 +12,7 @@ This repository contains codes realizing nonlinear optimization methods and visu
 1. Newton method
 2. Gradient descent
 3. BFGS with line search (Wolfe condition and strong Wolfe condition)
+4. Fletcher Reeves with line search (Wolfe condition and strong Wolfe condition)
 
 
 
